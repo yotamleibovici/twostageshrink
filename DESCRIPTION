@@ -1,15 +1,13 @@
 Package: twostageshrink
-Title: What the Package Does (One Line, Title Case)
+Title: Perform and Compare Two-Stage Procedures and Shrinkage Estimators
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Yotam",
+           family = "Leibovici",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "yotaml1810@hotmail.com")
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
