@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate.R
 \name{simulate}
 \alias{simulate}
-\title{Simulate data for the mediation hypothesis}
+\title{Simulate data for mediation hypotheses}
 \usage{
 simulate(nobs, nexper, nhyp, config)
 }
@@ -54,5 +54,5 @@ under the null hypotheses \eqn{\gamma = 0} and \eqn{\beta = 0},
 respectively.
 }
 \description{
-Simulate data for the mediation hypothesis
+Simulate data for mediation hypotheses
 }

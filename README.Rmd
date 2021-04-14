@@ -1,0 +1,148 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# twostageshrink
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This package is intended to provide the data used to produce the figures in
+my MSc thesis, and generic functions which can be used to generate similar
+figures, produced with possibly different parameters.
+
+## Installation
+<!--
+You can install the released version of twostageshrink from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("twostageshrink")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("yotamleibovici/twostageshrink")
+```
+-->
+## Example
+
+In order to reproduce the figures of the different two-stage methods'
+characteristics appearing in the thesis (their FWER and their number of true
+rejections), the following code should be used:
+
+```{r example}
+library(twostageshrink)
+
+# Prints the plot comparing the true rejections number of
+# the different methods, under the 1st configuration:
+reproduce(1, "trej")
+
+# Prints the plot comparing the FWER of
+# the different methods, under the 2nd configuration:
+reproduce(2, "fwer")
+
+# Prints the plot of the different MSE-ratio for
+# different cases, under the 1st configuration:
+shrink_reproduce(1)
+```
+
+The above lines demonstrate the main usage of this package.
+The \code{reproduce()} function uses the data in the \code{data/} directory,
+which is generated with scripts that can be found in the \code{data-raw/}
+directory. However, if you wish to produce variants of these figures with changes in
+parameters, you can use it similarly to the scripts. The function that might
+help you are \code{simulate()}, \code{perform()}, \code{evaluate()} and
+\code{measure()}, in this order. For the shrinkage figures, the relevant
+functions to generate data and manipulate it similarly to the shown in the
+thesis are \code{shrink_simulate()}, \code{shrink_estimate()},
+\code{shrink_evaluate()} and \code{shrink_reproduce()}, in this order.
+
+Usage example for user-defined parameters for the two-stage figures:
+
+```{r}
+simulate(
+    nobs = seq(from = 10, to = 50, by = 10),
+    nexper = 30,
+    nhyp = 30,
+    config = tibble::tribble(
+        ~altr, ~gaddend, ~gfactor, ~gexp, ~baddend, ~bfactor, ~bexp, ~prop,
+        FALSE, 0, 0,   0, 0, 0,   0, 0.5,
+        FALSE, 0, 3, 3/4, 0, 0,   0, 0.0,
+        FALSE, 0, 3, 1/2, 0, 0,   0, 0.4,
+        FALSE, 0, 3, 1/3, 0, 0,   0, 0.0,
+        FALSE, 1, 3, 1/2, 0, 0,   0, 0.0,
+        TRUE,  0, 3, 1/2, 0, 3, 1/2, 0.1,
+        TRUE,  0, 3, 1/3, 0, 3, 1/2, 0.0,
+        TRUE,  1, 3, 1/2, 0, 3, 1/2, 0.0
+    )
+) %>%
+  
+    perform(
+        filt_test = pmin(gpval, bpval) < 0.001,
+        base_pval = pmax(gpval, bpval),
+        base_thrl = 0.1,
+        base_thrl_adj_method = function(thrl) { thrl / sum(!is.na(thrl)) },
+        nobs, exper
+    ) %>%
+  
+    evaluate(nobs, exper) %>%
+  
+    measure(nobs)
+```
+
+Usage example for user-defined parameters for the MSE-ratio figures:
+
+```{r}
+  shrink_simulate(
+    nobs = seq(from = 10, to = 50, by = 10),
+    nrep = 30,
+    config = tibble::tribble(
+      ~gexp, ~gfactor, ~bexp, ~bfactor,
+      0.5, 1, 0.6, 1,
+      0.5, 1, 0.5, 1,
+      0.5, 2, 0.5, sqrt(5/3),
+      0.5, 2, 0.5, 2,
+      0.4, 2, 0.4, 1
+    )
+  ) %>%
+
+    shrink_estimate(
+      filtexp = 0.7, filtfactor = 1,
+      estim_base = gestim*bestim, estim_filt = abs(gestim*bestim)
+    ) %>%
+
+    shrink_evaluate(nobs, case)
+```
+
+
+
+<!--
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
+```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+-->

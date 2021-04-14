@@ -14,6 +14,12 @@
 evaluate <- function(data, ...) {
   group <- rlang::enexprs(...)
 
+  assertthat::assert_that(
+    is.data.frame(data),
+    assertthat::has_name(data, group %>% purrr::map(as.character())),
+    assertthat::has_name(data, c("altr", "final_result"))
+  )
+
   data %>%
     dplyr::group_by(!!!group) %>%
     dplyr::summarise(

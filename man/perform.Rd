@@ -11,7 +11,7 @@ perform(data, filt_test, base_pval, base_thrl, base_thrl_adj_method, ...)
 manipulated to construct filtration and base test statistics.}
 
 \item{filt_test}{An expression, that its evaluation, with \code{data} as an
-environment, produces a logical vector of length 1 or \code{data}'s number of
+environment, produces a \code{logical} vector of length 1 or \code{data}'s number of
 rows. A \code{TRUE} value correspond to an hypothesis that passes the filtration
 test, i.e., is NOT filtered (filtration test rejected).}
 
@@ -36,7 +36,7 @@ results of the corresponding parameter values.
 \item \code{base_thrl_adj}: Adjusted thresholds for the base test; the
 result of \code{base_thrl_adj_method} on the unfiltered thresholds in
 \code{base_thrl}.
-\item \code{final_result}: Logical, indicating for each hypothesis whether
+\item \code{final_result}: \code{logical}, indicating for each hypothesis whether
 both the filtration test and the base test of it are rejected (\code{TRUE}) or
 not (\code{FALSE}).
 }

@@ -1,4 +1,4 @@
-#' Simulate data for the mediation hypothesis
+#' Simulate data for mediation hypotheses
 #'
 #' @param nobs Number of observations (may be a vector)
 #' @param nexper Number of experiments for each \code{nobs} value.
@@ -45,6 +45,26 @@
 #'
 #' @examples
 simulate <- function(nobs, nexper, nhyp, config) {
+  assertthat::assert_that(
+    is.numeric(nobs),
+    assertthat::is.count(nexper),
+    assertthat::is.count(nhyp),
+
+    is.data.frame(config),
+    assertthat::has_name(config, c(
+      "altr",
+      "gaddend", "baddend",
+      "gfactor", "bfactor",
+      "gexp", "bexp",
+      "prop"
+    )),
+    is.logical(config$altr),
+    is.numeric(config$gaddend), is.numeric(config$baddend),
+    is.numeric(config$gfactor), is.numeric(config$bfactor),
+    is.numeric(config$gexp), is.numeric(config$bexp),
+    is.numeric(config$prop)
+  )
+
   ntotal <- length(nobs) * nexper * nhyp
 
   tidyr::expand_grid(
