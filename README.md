@@ -67,14 +67,16 @@ shrink_reproduce(1)
 
 <img src="man/figures/README-example-3.png" width="100%" />
 
-The above lines demonstrate the main usage of this package. The 
-function uses the data in the  directory, which is generated with
-scripts that can be found in the  directory. However, if you wish to
-produce variants of these figures with changes in parameters, you can
-use it similarly to the scripts. The function that might help you are ,
-,  and , in this order. For the shrinkage figures, the relevant
+The above lines demonstrate the main usage of this package. The
+`reproduce()` function uses the data in the `data/` directory, which is
+generated with scripts that can be found in the `data-raw/` directory.
+However, if you wish to produce variants of these figures with changes
+in parameters, you can use it similarly to the scripts. The function
+that might help you are `simulate()`, `perform()`, `evaluate()` and
+`measure()`, in this order. For the shrinkage figures, the relevant
 functions to generate data and manipulate it similarly to the shown in
-the thesis are , ,  and , in this order.
+the thesis are `shrink_simulate()`, `shrink_estimate()`,
+`shrink_evaluate()` and `shrink_reproduce()`, in this order.
 
 Usage example for user-defined parameters for the two-stage figures:
 

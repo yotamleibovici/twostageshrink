@@ -60,15 +60,15 @@ shrink_reproduce(1)
 ```
 
 The above lines demonstrate the main usage of this package.
-The \code{reproduce()} function uses the data in the \code{data/} directory,
-which is generated with scripts that can be found in the \code{data-raw/}
+The `reproduce()` function uses the data in the `data/` directory,
+which is generated with scripts that can be found in the `data-raw/`
 directory. However, if you wish to produce variants of these figures with changes in
 parameters, you can use it similarly to the scripts. The function that might
-help you are \code{simulate()}, \code{perform()}, \code{evaluate()} and
-\code{measure()}, in this order. For the shrinkage figures, the relevant
+help you are `simulate()`, `perform()`, `evaluate()` and
+`measure()`, in this order. For the shrinkage figures, the relevant
 functions to generate data and manipulate it similarly to the shown in the
-thesis are \code{shrink_simulate()}, \code{shrink_estimate()},
-\code{shrink_evaluate()} and \code{shrink_reproduce()}, in this order.
+thesis are `shrink_simulate()`, `shrink_estimate()`,
+`shrink_evaluate()` and `shrink_reproduce()`, in this order.
 
 Usage example for user-defined parameters for the two-stage figures:
 
