@@ -5,13 +5,13 @@ Authors@R:
     person(given = "Yotam",
            family = "Leibovici",
            role = c("aut", "cre"),
-           email = "yotaml1810@hotmail.com")
+           email = "yotam.leibovici@gmail.com")
 Description: What the package does (one paragraph).
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Imports:
     dplyr,
     forcats,
@@ -22,6 +22,8 @@ Imports:
 Suggests:
     ggplot2,
     latex2exp,
-    purrr
+    purrr,
+    MultiMed,
+    broom
 Depends: 
     R (>= 2.10)
