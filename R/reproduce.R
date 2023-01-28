@@ -25,6 +25,7 @@ method_names <- setNames(
 #' reproduce(2, "fwer")
 #'
 #' @importFrom magrittr `%>%`
+#' @importFrom magrittr `%$%`
 reproduce <- function(configid, output = c("trej", "fwer")) {
   assertthat::assert_that(
     assertthat::is.count(configid),
