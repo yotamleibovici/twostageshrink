@@ -1,11 +1,13 @@
 method_names <- setNames(
   c(
-    c("Without filtration", "$L^2$-norm", "Screen-min"),
-    paste0("Product, $\\delta = ", c(0.8, 0.9, 1), "$")
+    "nofilt-maxp", "screenmin-maxp", "l2norm-maxp",
+    "nofilt-sobel", "screenmin-sobel", "l2norm-sobel",
+    "dact"
   ),
   c(
-    "nofilt", "l2norm", "screenmin",
-    "product08", "product09", "product1"
+    "nofilt-maxp", "screenmin-maxp", "l2norm-maxp",
+    "nofilt-sobel", "screenmin-sobel", "l2norm-sobel",
+    "dact"
   )
 )
 

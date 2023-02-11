@@ -1,58 +1,76 @@
 ## code to prepare `d2_performed` dataset goes here
 
 rep_perform <- function(data) {
-  perform_spec <- function(filt_test) {
+  perform_spec <- function(data, filt_test, base_pval) {
     perform(
       data = data,
       filt_test = !!rlang::enexpr(filt_test),
-      base_pval = pmax(gpval, bpval),
+      base_pval = !!rlang::enexpr(base_pval),
       base_thrl = 0.05,
-      base_thrl_adj_method = function(thrl) { thrl / sum(!is.na(thrl)) },
+      base_thrl_adj_method = function(thrl) thrl,
       config, nobs, exper
     )
   }
 
-  filter_names <- c(
-    "nofilt", "l2norm", "screenmin",
-    "product08", "product09", "product1"
+  correction <<- "bonferroni"
+
+  l <- list(
+    "nofilt-maxp" = data %>%
+      perform_spec(
+        filt_test = TRUE,
+        base_pval = pmax(gpval, bpval) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "screenmin-maxp" = data %>%
+      perform_spec(
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
+        base_pval = pmax(gpval, bpval) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "l2norm-maxp" = data %>%
+      perform_spec(
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
+        base_pval = pmax(gpval, bpval) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "nofilt-sobel" = data %>%
+      perform_spec(
+        filt_test = TRUE,
+        base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "screenmin-sobel" = data %>%
+      perform_spec(
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
+        base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "l2norm-sobel" = data %>%
+      perform_spec(
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
+        base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
+          dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
+          stats::p.adjust(method = correction)
+      ),
+
+    "dact" = data %>%
+      perform_spec(
+        filt_test = TRUE,
+        base_pval = DACT::DACT(gpval, bpval, correction = "JC")
+      )
   )
 
-  filters <- list(
-    expr(TRUE),
-    expr(pmin(gpval, bpval) < 0.001),
-    expr(pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) < 0.001),
-    expr(abs(gestim*bestim) > 1.2*nobs^(-0.8)),
-    expr(abs(gestim*bestim) > 2*nobs^(-0.9)),
-    expr(abs(gestim*bestim) > 3*nobs^(-1))
-  )
-
-  names(filters) <- filter_names
-
-  # list(
-  #   "nofilt" = data %>%
-  #     perform_spec(filt_test = TRUE),
-  #
-  #   "screenmin" = data %>%
-  #     perform_spec(filt_test = pmin(gpval, bpval) < 0.001),
-  #
-  #   "l2norm" = data %>%
-  #     perform_spec(filt_test = pchisq(
-  #       nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE
-  #     ) < 0.001),
-  #
-  #   "product08" = data %>%
-  #     perform_spec(filt_test = abs(gestim*bestim) > 1.2*nobs^(-0.8)),
-  #
-  #   "product09" = data %>%
-  #     perform_spec(filt_test = abs(gestim*bestim) > 2*nobs^(-0.9)),
-  #
-  #   "product1" = data %>%
-  #     perform_spec(filt_test = abs(gestim*bestim) > 3*nobs^(-1))
-  # ) %>%
-
-  filters %>%
-    purrr::map(perform_spec) %>%
-    dplyr::bind_rows(.id = "method")
+  l %>% dplyr::bind_rows(.id = "method")
 }
 
 d2_performed <- rep_perform(d1_simulated)
