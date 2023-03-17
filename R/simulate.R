@@ -9,9 +9,8 @@
 #'   \itemize{
 #'     \item \code{altr}: \code{logical}, indicating whether this is a case of
 #'       the alternative.
-#'     \item \code{gaddend} and \code{baddend}; \code{gfactor} and
-#'     \code{bfactor}; and \code{gexp} and \code{bexp}: \code{numeric}
-#'       constants used to define the true parameters \eqn{\gamma_n} and
+#'     \item \code{g_func} and \code{b_func}: \code{function}s
+#'       used to define the true parameters \eqn{\gamma_n} and
 #'       \eqn{\beta_n}.
 #'     \item \code{prop}: \code{numeric}, discrete distribution for the
 #'       different cases in the configuration.
@@ -53,15 +52,10 @@ simulate <- function(nobs, nexper, nhyp, config) {
     is.data.frame(config),
     assertthat::has_name(config, c(
       "altr",
-      "gaddend", "baddend",
-      "gfactor", "bfactor",
-      "gexp", "bexp",
+      "g_func", "b_func",
       "prop"
     )),
     is.logical(config$altr),
-    is.numeric(config$gaddend), is.numeric(config$baddend),
-    is.numeric(config$gfactor), is.numeric(config$bfactor),
-    is.numeric(config$gexp), is.numeric(config$bexp),
     is.numeric(config$prop)
   )
 
@@ -76,10 +70,8 @@ simulate <- function(nobs, nexper, nhyp, config) {
   ) %>%
     dplyr::mutate(
       altr = config$altr[case],
-      g = config$gaddend[case] +
-        config$gfactor[case] * nobs^(-config$gexp[case]),
-      b = config$baddend[case] +
-        config$bfactor[case] * nobs^(-config$bexp[case]),
+      g = purrr::map2_dbl(case, nobs, function(case, nobs) config$g_func[[case]](nobs)),
+      b = purrr::map2_dbl(case, nobs, function(case, nobs) config$b_func[[case]](nobs)),
       gestim = rnorm(ntotal, mean = g, sd = 1/sqrt(nobs)),
       bestim = rnorm(ntotal, mean = b, sd = 1/sqrt(nobs)),
       gpval = 2 * pnorm(-abs(gestim), sd = 1/sqrt(nobs)),

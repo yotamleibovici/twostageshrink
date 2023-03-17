@@ -47,7 +47,15 @@ fwer_plots <- twostageshrink::d4_measured %>%
   ggplot2::ggplot(ggplot2::aes(
     x = nobs %>% forcats::as_factor(),
     y = fwer,
-    colour = method
+    colour = method %>% forcats::fct_relevel(
+      "nofilt-maxp",
+      "screenmin-maxp",
+      "l2norm-maxp",
+      "nofilt-sobel",
+      "screenmin-sobel",
+      "l2norm-sobel",
+      "dact"
+    )
   )) +
   ggplot2::scale_colour_discrete(labels = method_names %>% latex2exp::TeX()) +
   ggplot2::labs(
@@ -56,6 +64,7 @@ fwer_plots <- twostageshrink::d4_measured %>%
     colour = "Method"
   ) +
   ggplot2::geom_point() +
+  ggplot2::geom_line() +
   facet_wrap(vars(config), nrow = 3, labeller =
                as_labeller(function(string) paste("Configuration", string)))
 
@@ -65,7 +74,7 @@ fwer_plots <- twostageshrink::d4_measured %>%
 ggarrange(true_rejections_plots, fwer_plots, ncol = 2, common.legend = TRUE)
 
 ggsave(
-  paste0("pvals-all-new", ".pdf"),
+  paste0("pvals-all-new-3", ".pdf"),
   path = "C:\\Users\\yotam\\Desktop",
   width = 8, height = 6
 )

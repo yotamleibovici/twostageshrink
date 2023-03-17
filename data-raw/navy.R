@@ -59,6 +59,7 @@ statistics_navy_adenoma <- modelled_navy_adenoma %>%
 
 #------------------------------------------------------------------------------#
 
+correction <- "bonferroni"
 
 rep_perform_navy <- function(data) {
   perform_spec <- function(data, filt_test, base_pval) {
@@ -77,7 +78,7 @@ rep_perform_navy <- function(data) {
         filt_test = TRUE,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "screenmin-maxp" = data %>%
@@ -85,7 +86,7 @@ rep_perform_navy <- function(data) {
         filt_test = pmin(mediator_p.value, outcome_p.value) < 0.05 / 149,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "l2norm-maxp" = data %>%
@@ -93,7 +94,7 @@ rep_perform_navy <- function(data) {
         filt_test = pchisq(mediator_statistic^2 + outcome_statistic^2, 2, lower.tail = FALSE) < 0.05 / 149,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "nofilt-sobel" = data %>%
@@ -105,7 +106,7 @@ rep_perform_navy <- function(data) {
           lower.tail = FALSE
         ) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "screenmin-sobel" = data %>%
@@ -117,7 +118,7 @@ rep_perform_navy <- function(data) {
           lower.tail = FALSE
         ) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "l2norm-sobel" = data %>%
@@ -129,7 +130,7 @@ rep_perform_navy <- function(data) {
           lower.tail = FALSE
         ) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
-          stats::p.adjust(method = "BH")
+          stats::p.adjust(method = correction)
       ),
 
     "dact" = data %>%
