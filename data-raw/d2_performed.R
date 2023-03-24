@@ -25,7 +25,7 @@ rep_perform <- function(data) {
 
     "screenmin-maxp" = data %>%
       perform_spec(
-        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.02,
         base_pval = pmax(gpval, bpval) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
@@ -33,7 +33,7 @@ rep_perform <- function(data) {
 
     "l2norm-maxp" = data %>%
       perform_spec(
-        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.02,
         base_pval = pmax(gpval, bpval) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
@@ -49,7 +49,7 @@ rep_perform <- function(data) {
 
     "screenmin-sobel" = data %>%
       perform_spec(
-        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.02,
         base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
@@ -57,17 +57,17 @@ rep_perform <- function(data) {
 
     "l2norm-sobel" = data %>%
       perform_spec(
-        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.02,
         base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
-      ),
-
-    "dact" = data %>%
-      perform_spec(
-        filt_test = TRUE,
-        base_pval = DACT::DACT(gpval, bpval, correction = "JC")
       )
+
+    # "dact" = data %>%
+    #   perform_spec(
+    #     filt_test = TRUE,
+    #     base_pval = DACT::DACT(gpval, bpval, correction = "JC")
+    #   )
   )
 
   l %>% dplyr::bind_rows(.id = "method")

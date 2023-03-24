@@ -92,7 +92,7 @@ grid %>%
 
   ggsave(
     paste0("theoretical-plot", ".pdf"),
-    path = "C:\\Users\\yotam\\Desktop",
+    path = "C:\\Users\\yotam\\OneDrive\\Desktop",
     width = 10, height = 8
   )
 

@@ -73,7 +73,7 @@ rep_perform_navy <- function(data) {
   }
 
   l <- list(
-    "nofilt-maxp" = data %>%
+    "nofilt_maxp" = data %>%
       perform_spec(
         filt_test = TRUE,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
@@ -81,7 +81,7 @@ rep_perform_navy <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "screenmin-maxp" = data %>%
+    "screenmin_maxp" = data %>%
       perform_spec(
         filt_test = pmin(mediator_p.value, outcome_p.value) < 0.05 / 149,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
@@ -89,7 +89,7 @@ rep_perform_navy <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "l2norm-maxp" = data %>%
+    "l2norm_maxp" = data %>%
       perform_spec(
         filt_test = pchisq(mediator_statistic^2 + outcome_statistic^2, 2, lower.tail = FALSE) < 0.05 / 149,
         base_pval = pmax(mediator_p.value, outcome_p.value) %>%
@@ -97,7 +97,7 @@ rep_perform_navy <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "nofilt-sobel" = data %>%
+    "nofilt_sobel" = data %>%
       perform_spec(
         filt_test = TRUE,
         base_pval = 2*pnorm(
@@ -109,7 +109,7 @@ rep_perform_navy <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "screenmin-sobel" = data %>%
+    "screenmin_sobel" = data %>%
       perform_spec(
         filt_test = pmin(mediator_p.value, outcome_p.value) < 0.05 / 149,
         base_pval = 2*pnorm(
@@ -121,7 +121,7 @@ rep_perform_navy <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "l2norm-sobel" = data %>%
+    "l2norm_sobel" = data %>%
       perform_spec(
         filt_test = pchisq(mediator_statistic^2 + outcome_statistic^2, 2, lower.tail = FALSE) < 0.05 / 149,
         base_pval = 2 * pnorm(
@@ -131,13 +131,13 @@ rep_perform_navy <- function(data) {
         ) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
-      ),
-
-    "dact" = data %>%
-      perform_spec(
-        filt_test = TRUE,
-        base_pval = DACT::DACT(mediator_p.value, outcome_p.value, correction = "JC")
       )
+
+    # "dact" = data %>%
+    #   perform_spec(
+    #     filt_test = TRUE,
+    #     base_pval = DACT::DACT(mediator_p.value, outcome_p.value, correction = "JC")
+    #   )
   )
 
   l %>% dplyr::bind_rows(.id = "method") %>%
@@ -152,6 +152,20 @@ rep_perform_navy <- function(data) {
 performed_navy <- statistics_navy_adenoma %>% rep_perform_navy()
 
 
+
+
+
+
+performed_navy %>%
+  select(method, filt_test, mediator_statistic, outcome_statistic) %>%
+  filter(method %in% c("screenmin_maxp", "l2norm_maxp")) %>%
+  pivot_wider(
+    names_from = method,
+    values_from = filt_test
+  ) %>%
+  mutate(filters = paste("screenmin:", screenmin_maxp, "||", "l2norm:", l2norm_maxp)) %>%
+  ggplot(aes(x = mediator_statistic, y = outcome_statistic)) +
+  geom_point(aes(color = filters, shape = filters, size=1))
 
 
 # ==============================================================================#
