@@ -19,9 +19,8 @@ experiment.}
 \itemize{
 \item \code{altr}: \code{logical}, indicating whether this is a case of
 the alternative.
-\item \code{gaddend} and \code{baddend}; \code{gfactor} and
-\code{bfactor}; and \code{gexp} and \code{bexp}: \code{numeric}
-constants used to define the true parameters \eqn{\gamma_n} and
+\item \code{g_func} and \code{b_func}: \code{function}s
+used to define the true parameters \eqn{\gamma_n} and
 \eqn{\beta_n}.
 \item \code{prop}: \code{numeric}, discrete distribution for the
 different cases in the configuration.
