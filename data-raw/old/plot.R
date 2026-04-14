@@ -1,3 +1,8 @@
+library(ggplot2)
+library(magrittr)
+library(dplyr)
+
+
 colours <- c(
   sobel = "10PB 5/10" %>% munsell::mnsl(),
   maxp = "10PB 5/10" %>% munsell::rygbp(2) %>% munsell::mnsl(),
@@ -7,7 +12,7 @@ colours <- c(
   l2 = "7.5YR 5/10" %>% munsell::mnsl()
 )
 labels <- c(
-  sobel = "Sobel: ${|X*Y|}/{\\sqrt{X^2 + Y^2}}$",
+  sobel = r"(Sobel: ${|X*Y|}/{\sqrt{X^2 + Y^2}}$)",
   maxp = "MaxP",
   product = "$X*Y$",
 
@@ -29,14 +34,14 @@ grid <- expand.grid(
 
 
 grid %>%
-  ggplot(aes(
+  ggplot2::ggplot(ggplot2::aes(
     x = x,
     y = y
   )) +
-  geom_contour_filled(
-    aes(
-      z = z >= 1,
-      fill = z >= 1,
+  ggplot2::geom_contour_filled(
+    ggplot2::aes(
+      z = abs(x * y) / sqrt(x^2 + y^2) >= 1,
+      fill = abs(x * y) / sqrt(x^2 + y^2) >= 1,
       colour = "sobel",
       linetype = "Base"
     ),

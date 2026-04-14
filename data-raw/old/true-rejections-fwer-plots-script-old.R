@@ -5,12 +5,12 @@ library(ggpubr)
 #setwd(r"(C:\Users\yotam\My Drive\Studies\MSc\Yair-Yotam-SuperEfficiency\twostageshrink)")
 
 method_names <- c(
-  "nofilt-maxp" = "No Filtration / Max p-value",
-  "screenmin-maxp" = "ScreenMin / Max p-value",
-  "l2norm-maxp" = "L2-norm / Max p-value",
-  "nofilt-sobel" = "No Filtration / Sobel",
-  "screenmin-sobel" = "ScreenMin / Sobel",
-  "l2norm-sobel" = "L2 norm / Sobel"
+  "nofilt_maxp" = "No Filtration / Max p-value",
+  "screenmin_maxp" = "ScreenMin / Max p-value",
+  "l2norm_maxp" = "L2-norm / Max p-value",
+  "nofilt_sobel" = "No Filtration / Sobel",
+  "screenmin_sobel" = "ScreenMin / Sobel",
+  "l2norm_sobel" = "L2 norm / Sobel"
 )
 
 true_rejections_plots <- twostageshrink::d3_evaluated %>%
@@ -21,12 +21,12 @@ true_rejections_plots <- twostageshrink::d3_evaluated %>%
     x = nobs %>% forcats::as_factor(),
     y = mean_trej,
     colour = method %>% forcats::fct_relevel(
-      "nofilt-maxp",
-      "screenmin-maxp",
-      "l2norm-maxp",
-      "nofilt-sobel",
-      "screenmin-sobel",
-      "l2norm-sobel"
+      "nofilt_maxp",
+      "nofilt_sobel",
+      "screenmin_maxp",
+      "screenmin_sobel",
+      "l2norm_maxp",
+      "l2norm_sobel"
     )
   )) +
   ggplot2::scale_colour_discrete(labels = method_names %>% latex2exp::TeX()) +
@@ -36,6 +36,7 @@ true_rejections_plots <- twostageshrink::d3_evaluated %>%
     colour = "Method"
   ) +
   ggplot2::geom_point() +
+  ggplot2::geom_line(aes(group = method)) +
   facet_wrap(vars(config), nrow = 3, labeller =
                as_labeller(function(string) paste("Configuration", string)))
 
@@ -47,12 +48,12 @@ fwer_plots <- twostageshrink::d4_measured %>%
     x = nobs %>% forcats::as_factor(),
     y = fwer,
     colour = method %>% forcats::fct_relevel(
-      "nofilt-maxp",
-      "screenmin-maxp",
-      "l2norm-maxp",
-      "nofilt-sobel",
-      "screenmin-sobel",
-      "l2norm-sobel"
+      "nofilt_maxp",
+      "nofilt_sobel",
+      "screenmin_maxp",
+      "screenmin_sobel",
+      "l2norm_maxp",
+      "l2norm_sobel"
     )
   )) +
   ggplot2::scale_colour_discrete(labels = method_names %>% latex2exp::TeX()) +
@@ -62,8 +63,8 @@ fwer_plots <- twostageshrink::d4_measured %>%
     colour = "Method"
   ) +
   ggplot2::geom_point() +
-  ggplot2::geom_line() +
-  facet_wrap(vars(config), nrow = 3, labeller =
+  ggplot2::geom_line(aes(group = method)) +
+  ggplot2::facet_wrap(vars(config), nrow = 3, labeller =
                as_labeller(function(string) paste("Configuration", string)))
 
 

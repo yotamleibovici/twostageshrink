@@ -152,6 +152,49 @@ rep_perform_navy <- function(data) {
 performed_navy <- statistics_navy_adenoma %>% rep_perform_navy()
 
 
+method_names <- c(
+  "nofilt_maxp" = "No Filtration / Max p-value",
+  "screenmin_maxp" = "ScreenMin / Max p-value",
+  "l2norm_maxp" = "L2-norm / Max p-value",
+  "nofilt_sobel" = "No Filtration / Sobel",
+  "screenmin_sobel" = "ScreenMin / Sobel",
+  "l2norm_sobel" = "L2-norm / Sobel"
+)
+
+beautify_method_names <- function(names) {
+  method_names[names]
+}
+
+
+performed_navy %>%
+  mutate(method = method %>% forcats::fct_relevel(
+    "l2norm_maxp",
+    "screenmin_maxp",
+    "l2norm_sobel",
+    "screenmin_sobel",
+    "nofilt_maxp",
+    "nofilt_sobel"
+  )) %>%
+  arrange(method, base_pval) %>%
+  group_by(method) %>%
+  group_modify(~ head(., 2)) %>%
+  filter(!(method %in% c("nofilt_maxp", "nofilt_sobel"))) %>%
+  arrange(method, base_pval) %>%
+  mutate(method = method_names[method %>% as.character()]) %>%
+  select(
+    Method = method,
+    Metabolite = metabolite,
+    `Final (base) p-value` = base_pval
+  ) %>%
+  xtable(
+    caption = c(
+      "Most significant metabolites found by the two-stage procedures on the Navy Adenoma Study",
+      "Navy Adenoma p-values"
+    ),
+    digits = 4,
+    label = c("tbl:navy-pvals")
+  ) %>%
+  print(include.rownames=FALSE)
 
 
 

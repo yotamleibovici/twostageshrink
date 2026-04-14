@@ -7,10 +7,10 @@ base_thrl_adj_method <- function(pvals) { pvals / sum(!is.na(pvals)) }
 
 cases_param <- list(
   tibble::tribble(
-    ~prop, ~altr, ~g_func,             ~b_func,
-    0.65,  FALSE, \(n)              0, \(n) 0,
-    0.30,  FALSE, \(n)     3*n^(-1/2), \(n) 0,
-    0.05,  TRUE,  \(n)     3*n^(-1/2), \(n) 3*n^(-1/2),
+    ~prop, ~altr, ~g_func,             ~b_func, ~g_expr, ~b_expr,
+    0.65,  FALSE, \(n)              0, \(n) 0, '0', '0',
+    0.30,  FALSE, \(n)              0, \(n) 0, '0', '0',
+    0.05,  TRUE,  \(n)     3*n^(-1/2), \(n) 3*n^(-1/2), '$3*n^(-1/2)$', '$3*n^(-1/2)$'
   ),
 
   tibble::tribble(

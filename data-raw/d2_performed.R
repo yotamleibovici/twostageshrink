@@ -15,7 +15,7 @@ rep_perform <- function(data) {
   correction <<- "bonferroni"
 
   l <- list(
-    "nofilt-maxp" = data %>%
+    "nofilt_maxp" = data %>%
       perform_spec(
         filt_test = TRUE,
         base_pval = pmax(gpval, bpval) %>%
@@ -23,23 +23,23 @@ rep_perform <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "screenmin-maxp" = data %>%
+    "screenmin_maxp" = data %>%
       perform_spec(
-        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.02,
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
         base_pval = pmax(gpval, bpval) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
       ),
 
-    "l2norm-maxp" = data %>%
+    "l2norm_maxp" = data %>%
       perform_spec(
-        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.02,
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
         base_pval = pmax(gpval, bpval) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
       ),
 
-    "nofilt-sobel" = data %>%
+    "nofilt_sobel" = data %>%
       perform_spec(
         filt_test = TRUE,
         base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
@@ -47,17 +47,17 @@ rep_perform <- function(data) {
           stats::p.adjust(method = correction)
       ),
 
-    "screenmin-sobel" = data %>%
+    "screenmin_sobel" = data %>%
       perform_spec(
-        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.02,
+        filt_test = pmin(gpval, bpval) %>% stats::p.adjust(method = correction) < 0.05,
         base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
       ),
 
-    "l2norm-sobel" = data %>%
+    "l2norm_sobel" = data %>%
       perform_spec(
-        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.02,
+        filt_test = pchisq(nobs*(gestim^2 + bestim^2), 2, lower.tail = FALSE) %>% stats::p.adjust(method = correction) < 0.05,
         base_pval = 2*pnorm(sqrt(nobs)*abs(gestim * bestim) / sqrt(gestim^2 + bestim^2), lower.tail = FALSE) %>%
           dplyr::if_else(filt_test == TRUE, ., NA_real_) %>%
           stats::p.adjust(method = correction)
@@ -76,3 +76,28 @@ rep_perform <- function(data) {
 d2_performed <- rep_perform(d1_simulated)
 
 usethis::use_data(d2_performed, overwrite = TRUE, compress = "xz")
+
+
+
+
+
+
+
+
+# ==========================================================================
+
+
+d2_performed %>%
+  select(method, filt_test, gestim, bestim) %>%
+  filter(method %in% c("screenmin_maxp", "l2norm_maxp")) %>%
+  filter(config == 1 & nobs == 240 & exper < 10) %>%
+  ungroup() %>%
+  pivot_wider(
+    names_from = method,
+    values_from = filt_test
+  ) %>%
+  mutate(filters = paste("screenmin:", screenmin_maxp, "||", "l2norm:", l2norm_maxp)) %>%
+  ggplot(aes(x = gestim, y = bestim)) +
+  geom_point(aes(color = filters, shape = filters, size = 1))
+
+
